@@ -7,13 +7,11 @@ int open_heredoc_and_write_pipe(t_tokenizer *token, t_env *env, int *exit_status
     char    *line;
 
     (void)env;
-	(void)exit_status; // If exit_status is not used, you can remove this line
-    // *exit_status = 0;
+    (void)exit_status;
 
     if (pipe(pipefd) == -1)
     {
         perror("pipe");
-        // *exit_status = 1;
         return -1;
     }
 
@@ -32,8 +30,22 @@ int open_heredoc_and_write_pipe(t_tokenizer *token, t_env *env, int *exit_status
             free(line);
             break;
         }
-        write(pipefd[1], line, ft_strlen(line));
-        write(pipefd[1], "\n", 1);
+        if (write(pipefd[1], line, ft_strlen(line)) == -1)
+        {
+            perror("write");
+            free(line);
+            close(pipefd[1]);
+            close(pipefd[0]);
+            return -1;
+        }
+        if (write(pipefd[1], "\n", 1) == -1)
+        {
+            perror("write");
+            free(line);
+            close(pipefd[1]);
+            close(pipefd[0]);
+            return -1;
+        }
         free(line);
     }
 

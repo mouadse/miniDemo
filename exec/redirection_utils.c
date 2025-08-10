@@ -12,23 +12,29 @@ void init_redirect_fds(t_tokenizer *tokens)
 
 int redirection_infos(t_tokenizer *tokens)
 {
-    while (tokens && tokens->next)
+    while (tokens)
     {
-        int fd = -1;
+        if ((tokens->op == GREAT || tokens->op == GREAT_GREAT || 
+             tokens->op == LESS || tokens->op == LESS_LESS) && tokens->next)
+        {
+            int fd = -1;
 
-        if (tokens->op == GREAT)
-            fd = open(tokens->next->str, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-        else if (tokens->op == GREAT_GREAT)
-            fd = open(tokens->next->str, O_WRONLY | O_CREAT | O_APPEND, 0644);
-        else if (tokens->op == LESS)
-            fd = open(tokens->next->str, O_RDONLY);
-        else if (tokens->op == LESS_LESS)
-            fd = open_heredoc_and_write_pipe(tokens->next, glb_list()->env, NULL);
+            if (tokens->op == GREAT)
+                fd = open(tokens->next->str, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+            else if (tokens->op == GREAT_GREAT)
+                fd = open(tokens->next->str, O_WRONLY | O_CREAT | O_APPEND, 0644);
+            else if (tokens->op == LESS)
+                fd = open(tokens->next->str, O_RDONLY);
+            else if (tokens->op == LESS_LESS)
+                fd = open_heredoc_and_write_pipe(tokens->next, glb_list()->env, NULL);
 
-        if (fd < 0 && (tokens->op == GREAT || tokens->op == GREAT_GREAT || tokens->op == LESS))
-            tokens->next->redirect.errnum = errno;
-        tokens->next->redirect.file_fd = fd;
-
+            if (fd < 0 && (tokens->op == GREAT || tokens->op == GREAT_GREAT || tokens->op == LESS))
+                tokens->next->redirect.errnum = errno;
+            else if (fd < 0 && tokens->op == LESS_LESS)
+                tokens->next->redirect.errnum = errno;
+                
+            tokens->next->redirect.file_fd = fd;
+        }
         tokens = tokens->next;
     }
     return 0;
