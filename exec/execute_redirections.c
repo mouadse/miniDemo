@@ -10,7 +10,9 @@ int execute_redirections(t_tokenizer *tokens)
             {
                 ft_putstr_fd("minishell: ", 2);
                 ft_putstr_fd(tokens->next->str, 2);
-                ft_putstr_fd(": Permission denied\n", 2);
+                ft_putstr_fd(": ", 2);
+                ft_putstr_fd(strerror(tokens->next->redirect.errnum), 2);
+                ft_putchar_fd('\n', 2);
                 return 1;
             }
             if (dup2(tokens->next->redirect.file_fd, STDOUT_FILENO) < 0)
@@ -25,7 +27,9 @@ int execute_redirections(t_tokenizer *tokens)
             {
                 ft_putstr_fd("minishell: ", 2);
                 ft_putstr_fd(tokens->next->str, 2);
-                ft_putstr_fd(": Permission denied\n", 2);
+                ft_putstr_fd(": ", 2);
+                ft_putstr_fd(strerror(tokens->next->redirect.errnum), 2);
+                ft_putchar_fd('\n', 2);
                 return 1;
             }
             if (dup2(tokens->next->redirect.file_fd, STDIN_FILENO) < 0)

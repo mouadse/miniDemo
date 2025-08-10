@@ -68,6 +68,7 @@ typedef struct s_redirections
 	t_operator		type;
 	char			*str;
 	int				file_fd;
+	int				errnum;
 	t_quote			qt;
 	
 }			t_redirections;
@@ -172,6 +173,7 @@ int open_heredoc_and_write_pipe(t_tokenizer *token, t_env *env, int *exit_status
 int	redirection_infos(t_tokenizer *tokens);
 int execute_redirections(t_tokenizer *tokens);
 void	close_redirection_fds(t_tokenizer *token);
+void	init_redirect_fds(t_tokenizer *tokens);
 void signal_handler_general(int signum);
 void signal_handler_input(int signum);
 void signal_handler_heredoc(int signum);
