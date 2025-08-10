@@ -23,7 +23,7 @@ char **tokens_to_args(t_tokenizer *tokens)
             tmp = tmp->next;
     }
 
-    char **args = malloc(sizeof(char *) * (count + 1));
+    char **args = gc_alloc(sizeof(char *) * (count + 1));
     if (!args)
         return NULL;
 

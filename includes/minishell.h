@@ -97,16 +97,6 @@ typedef struct s_ast
 	struct s_ast	*left;
 }				t_ast;
 
-typedef struct s_garbage_collector
-{
-	t_ast			*tree_node;
-	t_tokenizer		*token;
-	t_redirections	*rdc;
-	int				exit_status;
-
-}				t_garbage_collector;
-
-extern t_garbage_collector		*g_gc;
 typedef struct s_env
 {
 	char	*name;
@@ -121,6 +111,7 @@ typedef struct s_glb
 	t_env			*env;
 	t_tokenizer		*tokens;
 	t_redirections	*rdr;
+	t_list			*gc;
 	int 			exit_status;
 	pid_t           pid_pipeline[2];
 
@@ -133,10 +124,11 @@ void	print_node(t_ast	*ast);
 void	print_tree(t_ast	*ast);
 void	print_tokenizer(t_tokenizer *tokens);
 void	print_op(t_operator op);
+void	*gc_alloc(size_t size);
+void	gc_free_all(void);
 
 /* FREE_EXIT*/
 
-extern t_garbage_collector		*g_free;
 void	free_tokens(char *input, t_tokenizer *tokens);
 void	free_env(t_env *env);
 

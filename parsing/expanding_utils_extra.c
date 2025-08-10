@@ -23,7 +23,7 @@ static int	*count_quotes(char *str)
 	}
 	if (count == 0)
 		return (NULL);
-	quote_array = malloc(sizeof(int) * count * 2);
+	quote_array = gc_alloc(sizeof(int) * count * 2);
 	return (quote_array);
 }
 

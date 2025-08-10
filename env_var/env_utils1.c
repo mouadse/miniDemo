@@ -59,7 +59,7 @@ char	**envlist_to_array(t_env *env_list)
 		count++;
 		tmp = tmp->next;
 	}
-	env_arr = malloc(sizeof(char *) * (count + 1));
+	env_arr = gc_alloc(sizeof(char *) * (count + 1));
 	if (!env_arr)
 		return NULL;
 	if (fill_env_array(env_arr, env_list) == -1)

@@ -15,7 +15,7 @@ t_env *create_env_node(char *name, char *value)
 {
     t_env *new;
 
-    new = malloc(sizeof(t_env));
+    new = gc_alloc(sizeof(t_env));
     if (!new)
         return NULL;
     new->name = name;

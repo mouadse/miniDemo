@@ -9,7 +9,7 @@ void signal_handler_general(int signum)
         rl_on_new_line();
         rl_replace_line("", 0);
         rl_redisplay();
-        g_gc->exit_status = 130;
+        glb_list()->exit_status = 130;
     }
 }
 
@@ -18,7 +18,7 @@ void signal_handler_input(int signum)
     if (signum == SIGINT)
     {
         ft_putstr_fd("\n", STDOUT_FILENO);
-        g_gc->exit_status = 130;
+        glb_list()->exit_status = 130;
         rl_on_new_line();
         rl_replace_line("", 0);
         rl_redisplay();
@@ -26,7 +26,7 @@ void signal_handler_input(int signum)
     else if (signum == SIGQUIT)
     {
         ft_putstr_fd("Quit (core dumped)\n", STDOUT_FILENO);
-        g_gc->exit_status = 131;
+        glb_list()->exit_status = 131;
     }
 }
 
@@ -52,7 +52,7 @@ void signal_handler_heredoc(int signum)
         }
         close(fd);
         kill(child_pid, SIGKILL);
-        g_gc->exit_status = 130;
+        glb_list()->exit_status = 130;
     }
     else if (signum == SIGQUIT)
     {

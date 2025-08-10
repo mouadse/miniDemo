@@ -35,8 +35,8 @@ WFLAGS = -Wall -Wextra -Werror -Iincludes -g3 -O0 -fsanitize=address,leak,undefi
 
 all: ${NAME}
 
-${NAME}: ${OBJF}
-	${LIBC} ${NAME} ${OBJF}
+${NAME}: ${OBJF} ${OBJBF}
+	${LIBC} ${NAME} ${OBJF} ${OBJBF}
 
 bonus: ${OBJBF}
 	${LIBC} ${NAME} ${OBJBF}

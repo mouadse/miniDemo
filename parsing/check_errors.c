@@ -33,15 +33,26 @@ int	check_parsing_errors(t_tokenizer *token)
 {
 	while (token != NULL)
 	{
-		if (token->op != NOT_OP && ((token->next != NULL
-					&& token->next->op != NOT_OP) || token->next == NULL))
+		if (token->op != NOT_OP)
 		{
-			if (token->op == PIPE)
-				printf("Minishell: syntax error near unexpected token `|\'\n");
-			else
-				printf
-				("Minishell: syntax error near unexpectedtoken \'newline\'\n");
-			return (1);
+			if (token->next == NULL)
+			{
+				printf("Minishell: syntax error near unexpected token `newline'\n");
+				return (1);
+			}
+			if (token->next->op != NOT_OP)
+			{
+				if (token->op == PIPE && token->next->op == PIPE)
+				{
+					printf("Minishell: syntax error near unexpected token `||'\n");
+					return (1);
+				}
+				if (token->op != PIPE && token->next->op != PIPE)
+				{
+					printf("Minishell: syntax error near unexpected token `>'\n");
+					return (1);
+				}
+			}
 		}
 		token = token->next;
 	}

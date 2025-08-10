@@ -2,7 +2,7 @@
 
 static t_tokenizer	*add_node(t_tokenizer **node)
 {
-	*node = malloc(sizeof(t_tokenizer));
+	*node = gc_alloc(sizeof(t_tokenizer));
 	if (*node == NULL)
 	{
 		exit(0);

@@ -11,7 +11,7 @@ t_env *save_env(char **env)
         return NULL;
     while (env[i] != 0)
     {
-        t_env *new_node = malloc(sizeof(t_env));
+        t_env *new_node = gc_alloc(sizeof(t_env));
         if (!new_node)
             return NULL;
 
@@ -97,6 +97,7 @@ int main(int ac, char **av, char **env)
 		expanding(&tokens);
 		set_signal_handler(tokens); //set+sognals
 		init_redirect_fds(tokens);
+		redirection_infos(tokens);
 	//	print_tokenizer(tokens);
         if (has_pipe(tokens))
         {
@@ -105,7 +106,6 @@ int main(int ac, char **av, char **env)
             free_tokens(input, tokens);
             continue;
         }
-		redirection_infos(tokens);
 		args = tokens_to_args(tokens);
 		if (args && args[0] && args[0][0] != 0)
 		{
@@ -175,5 +175,6 @@ int main(int ac, char **av, char **env)
 		free_args(args);
 		free_tokens(input, tokens);
 	}
+	gc_free_all();
 	return (glb_list()->exit_status);
 }

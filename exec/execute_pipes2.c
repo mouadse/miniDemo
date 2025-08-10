@@ -84,7 +84,7 @@ void execute_multiple_pipes(t_tokenizer *tokens)
         }
     }
 
-    pid_t *pids = malloc(sizeof(pid_t) * cmd_count);
+    pid_t *pids = gc_alloc(sizeof(pid_t) * cmd_count);
     if (!pids)
     {
         free(commands);

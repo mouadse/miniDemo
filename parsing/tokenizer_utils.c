@@ -33,7 +33,7 @@ char	*alloc_quote_help(char *str, int *i)
 	c = *str;
 	while (str[len] != c)
 		len++;
-	alc_str = malloc(len + 2);
+	alc_str = gc_alloc(len + 2);
 	ft_strlcpy(alc_str, str, len + 2);
 	*i = *i + len;
 	return (alc_str);
