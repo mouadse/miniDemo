@@ -12,6 +12,9 @@ void init_redirect_fds(t_tokenizer *tokens)
 
 int redirection_infos(t_tokenizer *tokens)
 {
+    t_tokenizer *start = tokens;
+    int has_error = 0;
+    
     while (tokens)
     {
         if ((tokens->op == GREAT || tokens->op == GREAT_GREAT || 
@@ -28,16 +31,26 @@ int redirection_infos(t_tokenizer *tokens)
             else if (tokens->op == LESS_LESS)
                 fd = open_heredoc_and_write_pipe(tokens->next, glb_list()->env, NULL);
 
-            if (fd < 0 && (tokens->op == GREAT || tokens->op == GREAT_GREAT || tokens->op == LESS))
+            if (fd < 0)
+            {
                 tokens->next->redirect.errnum = errno;
-            else if (fd < 0 && tokens->op == LESS_LESS)
-                tokens->next->redirect.errnum = errno;
+                has_error = 1;
+                
+                /* Stop opening further files if any redirection has an error */
+                if (tokens->op != LESS_LESS) /* Heredocs are handled separately */
+                {
+                    /* Close all previously opened file descriptors */
+                    close_redirection_fds(start);
+                    return 1;
+                }
+            }
                 
             tokens->next->redirect.file_fd = fd;
         }
         tokens = tokens->next;
     }
-    return 0;
+    
+    return has_error;
 }
 
 

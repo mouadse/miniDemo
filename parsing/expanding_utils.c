@@ -3,7 +3,20 @@
 char	*check_env(char *str)
 {
 	t_env	*env;
+	char	*exit_str;
+	char	*temp_itoa;
 
+	// Handle special case $?
+	if (ft_strncmp(str, "?", 2) == 0)
+	{
+		free(str);
+		temp_itoa = ft_itoa(glb_list()->exit_status);
+		// Copy to garbage collected memory
+		exit_str = gc_alloc(ft_strlen(temp_itoa) + 1);
+		ft_strlcpy(exit_str, temp_itoa, ft_strlen(temp_itoa) + 1);
+		free(temp_itoa);
+		return (exit_str);
+	}
 	env = glb_list()->env;
 	while (env != 0)
 	{
@@ -40,6 +53,15 @@ char	*re_alloc(char *str, int *start, int len, char *env_value)
 
 	if (env_value == NULL)
 	{
+		/* Remove the variable reference completely */
+		ft_memmove(str + *start, str + *start + len, ft_strlen(str + *start + len) + 1);
+		*start -= 1;
+		return (str);
+	}
+	/* If empty string, retain it properly */
+	if (env_value[0] == '\0')
+	{
+		/* Handle empty environment variable value */
 		ft_memmove(str + *start, str + *start + len, ft_strlen(str + *start + len) + 1);
 		*start -= 1;
 		return (str);

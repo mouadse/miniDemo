@@ -142,6 +142,17 @@ int main(int ac, char **av, char **env)
 						exit(127);
 					}
 
+					/* Handle directories specifically */
+					struct stat path_stat;
+					if (stat(path, &path_stat) == 0 && S_ISDIR(path_stat.st_mode))
+					{
+						ft_putstr_fd("minishell: ", 2);
+						ft_putstr_fd(args[0], 2);
+						ft_putstr_fd(": Is a directory\n", 2);
+						free(path);
+						exit(126); /* 126 is the correct exit code for permission denied */
+					}
+
 					envp = envlist_to_array(glb_list()->env);
 					if (!envp)
 					{

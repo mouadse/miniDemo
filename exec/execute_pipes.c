@@ -72,7 +72,8 @@ static void execute_pipeline_left(t_tokenizer *left_tokens, int *pipe_end)
         }
         close(pipe_end[0]);
         close(pipe_end[1]);
-        if (execute_redirections(left_tokens))
+        init_redirect_fds(left_tokens);
+        if (redirection_infos(left_tokens) || execute_redirections(left_tokens))
             exit(1);
         args = tokens_to_args(left_tokens);
         if (!args || !args[0] || args[0][0] == 0)
@@ -133,7 +134,8 @@ static void execute_pipeline_right(t_tokenizer *right_tokens, int *pipe_end)
         }
         close(pipe_end[0]);
         close(pipe_end[1]);
-        if (execute_redirections(right_tokens))
+        init_redirect_fds(right_tokens);
+        if (redirection_infos(right_tokens) || execute_redirections(right_tokens))
             exit(1);
         args = tokens_to_args(right_tokens);
         if (!args || !args[0] || args[0][0] == 0)

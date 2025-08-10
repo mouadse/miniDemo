@@ -32,6 +32,12 @@ int	valid_expanding(char *str, int *len)
 	int			i;
 
 	i = 1;
+	// Handle special case $?
+	if (str[1] == '?')
+	{
+		*len = 2;
+		return (1);
+	}
 	if (!ft_isalnum(str[1]) && str[i] != '_')
 		return (0);
 	if (ft_isdigit(str[1]))

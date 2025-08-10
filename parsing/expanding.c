@@ -56,6 +56,7 @@ t_tokenizer	**env_var(t_tokenizer **token)
 	int			to_dele;
 
 	i = 0;
+	to_dele = 0;
 	while ((*token)->str[i] != 0)
 	{
 		c = (*token)->str[i];
@@ -70,8 +71,6 @@ t_tokenizer	**env_var(t_tokenizer **token)
 	}
 	if (to_retokenize(token) == 1)
 	{
-		 	// printf("expand_nq : %s \n", (*token)->str);
-			// exit(1);
 		tokenize_the_envar(token);
 	}
 	if (!to_dele)
@@ -84,6 +83,7 @@ t_tokenizer	**env_var(t_tokenizer **token)
 void	expanding(t_tokenizer **token)
 {
 	t_tokenizer	**temp;
+	t_tokenizer	*to_remove;
 
 	temp = token;
 	while ((*temp) != NULL)
@@ -100,6 +100,18 @@ void	expanding(t_tokenizer **token)
 		}
 		if ((*temp)->op == NOT_OP)
 			quote_handling((*temp));
+
+		// Remove empty tokens after expansion
+		if ((*temp) != NULL && (*temp)->op == NOT_OP &&
+			(*temp)->str != NULL && (*temp)->str[0] == '\0')
+		{
+			to_remove = *temp;
+			*temp = (*temp)->next;
+			free(to_remove->str);
+			free(to_remove);
+			continue;
+		}
+
 		if ((*temp) == NULL)
 			break ;
 		temp = &(*temp)->next;

@@ -23,7 +23,7 @@ static void exit_num_error(char *arg)
     ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
     ft_putstr_fd(arg, STDERR_FILENO);
     ft_putstr_fd(": numeric argument required\n", STDERR_FILENO);
-    exit(255);
+    exit(2);
 }
 
 static void exit_arg_error(void)
@@ -40,11 +40,11 @@ void ft_exit(char **args)
     if (args[1])
     {
         if (!is_numeric_arg(args[1]))
-            exit_num_error(args[1]);
+            exit_num_error(args[1]); /* This now exits with exit code 2 */
         if (args[2])
         {
             exit_arg_error();
-            return ;
+            exit(2); /* Exit with code 2 for too many arguments, instead of just setting status */
         }
         exit_code = my_ft_atoll(args[1], &overflow);
         if (overflow)

@@ -5,12 +5,17 @@ static int is_valid_identifier(const char *s)
 	int i;
 
 	i = 0;
-	if (!s || (!(ft_isalpha(s[i]) || s[i] == '_')))
+	if (!s || !*s)
 		return (0);
-	while (s[i])
+	/* First character must be alpha or underscore */
+	if (!(ft_isalpha(s[i]) || s[i] == '_'))
+		return (0);
+	/* Handle special case where the identifier is just a dash (A-) */
+	if (s[i + 1] == '-' && (s[i + 2] == '=' || s[i + 2] == '\0'))
+		return (0);
+	while (s[i] && s[i] != '=')
 	{
-		if (s[i] == '=')
-			break;
+		/* Only alphanumeric and underscore allowed in variable names */
 		if (!(ft_isalnum(s[i]) || s[i] == '_'))
 			return (0);
 		i++;
@@ -77,8 +82,10 @@ static void update_or_add_export(char *arg, t_env **env_list)
 int ft_export(char **args, t_env **env_list)
 {
 	int i;
+	int ret_val;
 
 	i = 1;
+	ret_val = 0;
 	if (!args[1])
 	{
 		print_exported_vars(*env_list);
@@ -91,11 +98,12 @@ int ft_export(char **args, t_env **env_list)
 			ft_putstr_fd("minishell: export: `", 2);
 			ft_putstr_fd(args[i], 2);
 			ft_putstr_fd("': not a valid identifier\n", 2);
+			ret_val = 1; /* Set exit code to 1 for invalid identifiers */
 		}
 		else
 			update_or_add_export(args[i], env_list);
 		i++;
 	}
-	return (0);
+	return (ret_val);
 }
 
