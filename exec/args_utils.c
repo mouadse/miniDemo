@@ -5,10 +5,22 @@ char **tokens_to_args(t_tokenizer *tokens)
     int count = 0;
     t_tokenizer *tmp = tokens;
 
-    while (tmp && tmp->op == NOT_OP)
+    while (tmp)
     {
-        count++;
-        tmp = tmp->next;
+        if (tmp->op == LESS || tmp->op == LESS_LESS || 
+            tmp->op == GREAT || tmp->op == GREAT_GREAT)
+        {
+            tmp = tmp->next;
+            if (tmp)
+                tmp = tmp->next;
+        }
+        else if (tmp->op == NOT_OP)
+        {
+            count++;
+            tmp = tmp->next;
+        }
+        else
+            tmp = tmp->next;
     }
 
     char **args = malloc(sizeof(char *) * (count + 1));
@@ -17,10 +29,22 @@ char **tokens_to_args(t_tokenizer *tokens)
 
     tmp = tokens;
     int i = 0;
-    while (tmp && tmp->op == NOT_OP)
+    while (tmp)
     {
-        args[i++] = ft_strdup(tmp->str);
-        tmp = tmp->next;
+        if (tmp->op == LESS || tmp->op == LESS_LESS || 
+            tmp->op == GREAT || tmp->op == GREAT_GREAT)
+        {
+            tmp = tmp->next;
+            if (tmp)
+                tmp = tmp->next;
+        }
+        else if (tmp->op == NOT_OP)
+        {
+            args[i++] = ft_strdup(tmp->str);
+            tmp = tmp->next;
+        }
+        else
+            tmp = tmp->next;
     }
     args[i] = NULL;
     return args;
