@@ -1,31 +1,49 @@
 #include "minishell.h"
 
-t_env	*save_env(char **env)
+t_env *save_env(char **env)
 {
-	t_env	*env_list;
-	t_env	*env_head;
-	int		i;
-	int		j;
+    t_env *head = NULL;
+    t_env *tail = NULL;
+    int i = 0;
+    int j;
 
-	i = 0;
-	env_head = malloc(sizeof(t_env));
-	env_list = env_head;
-	while (env[i] != 0)
-	{
-		j = 0;
-		while (env[i][j] != '=')
-			j++;
-		env_list->name = ft_substr(env[i], 0, j);
-		env_list->value = ft_substr(env[i], j + 1, ft_strlen(env[i]));
-		i++;
-		if (env[i] != NULL)
-			env_list->next = malloc(sizeof(t_env));
-		else
-			break;
-		env_list = env_list->next;
-	}
-	env_list->next = NULL;
-	return (env_head);
+    if (!env)
+        return NULL;
+    while (env[i] != 0)
+    {
+        t_env *new_node = malloc(sizeof(t_env));
+        if (!new_node)
+            return NULL;
+
+        j = 0;
+        while (env[i][j] && env[i][j] != '=')
+            j++;
+
+        if (env[i][j] == '=')
+        {
+            new_node->name = ft_substr(env[i], 0, j);
+            new_node->value = ft_substr(env[i], j + 1, ft_strlen(env[i]));
+        }
+        else
+        {
+            new_node->name = ft_strdup(env[i]);
+            new_node->value = ft_strdup("");
+        }
+        new_node->next = NULL;
+
+        if (head == NULL)
+        {
+            head = new_node;
+            tail = new_node;
+        }
+        else
+        {
+            tail->next = new_node;
+            tail = new_node;
+        }
+        i++;
+    }
+    return head;
 }
 
 int main(int ac, char **av, char **env)
@@ -52,6 +70,8 @@ int main(int ac, char **av, char **env)
 		if (!input)
         {
             printf("exit\n");
+            free_env(glb_list()->env);
+            rl_clear_history();
 			exit(1);
         }
 		if (ft_strlen(input) == 0)
@@ -76,6 +96,7 @@ int main(int ac, char **av, char **env)
 
 		expanding(&tokens);
 		set_signal_handler(tokens); //set+sognals
+		init_redirect_fds(tokens);
 	//	print_tokenizer(tokens);
         if (has_pipe(tokens))
         {

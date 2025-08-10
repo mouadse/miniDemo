@@ -40,7 +40,7 @@ char	*re_alloc(char *str, int *start, int len, char *env_value)
 
 	if (env_value == NULL)
 	{
-		ft_strlcpy(str + *start, str + *start + len, ft_strlen(str) - len + 1);
+		ft_memmove(str + *start, str + *start + len, ft_strlen(str + *start + len) + 1);
 		*start -= 1;
 		return (str);
 	}
