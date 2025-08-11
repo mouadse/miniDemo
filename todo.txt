@@ -1,100 +1,74 @@
-Test  26: ❌ export A-
-mini exit code = 0
-bash exit code = 1
-Test  30: ❌ export HELLO-=123
-mini exit code = 0
-bash exit code = 1
-Test  31: ❌ export =
-mini exit code = 0
-bash exit code = 1
-Test  32: ❌ export 123
-mini exit code = 0
-bash exit code = 1
-Test  40: ❌ cd $PWD hi
+Test  70: ❌ echo <"./test_files/infile_big" | echo <"./test_files/infile"
 mini exit code = 1
-bash exit code = 2
-Test  50: ❌ exit hello
-mini exit code = 255
-bash exit code = 2
-Test  51: ❌ exit 42 world
-mini exit code = 0
-bash exit code = 2
-Test  73: ✅⚠️  cat <"./test_files/infile" | echo hi
+bash exit code = 0
+Test  73: ❌ cat <"./test_files/infile" | echo hi
+mini exit code = 1
+bash exit code = 0
 mini error = ()
 bash error = ( Broken pipe)
-Test  88: ❌ ls >"./outfiles/outfile01" >./test_files/invalid_permission >"./outfiles/outfile02"
-Only in ./mini_outfiles: outfile02
-mini outfiles:
-bash outfiles:
-Test  89: ❌ ls >./test_files/invalid_permission >"./outfiles/outfile01" >./test_files/invalid_permission
-Only in ./mini_outfiles: outfile01
-mini outfiles:
-bash outfiles:
-cat: './bash_outfiles/*': No such file or directory
-Test  98: ❌ echo hi >./test_files/invalid_permission >./outfiles/outfile01 | echo bye
-Only in ./mini_outfiles: outfile01
-mini outfiles:
-bash outfiles:
-cat: './bash_outfiles/*': No such file or directory
-Test 101: ❌ echo hi | echo bye >./test_files/invalid_permission >./outfiles/outfile01
-Only in ./mini_outfiles: outfile01
-mini outfiles:
-bash outfiles:
-cat: './bash_outfiles/*': No such file or directory
-Test 104: ❌ cat <missing >./outfiles/outfile01
-Only in ./mini_outfiles: outfile01
-mini outfiles:
-bash outfiles:
-cat: './bash_outfiles/*': No such file or directory
-Test 116: ❌ ls >>./test_files/invalid_permission >>./outfiles/outfile01
-Only in ./mini_outfiles: outfile01
-mini outfiles:
-bash outfiles:
-cat: './bash_outfiles/*': No such file or directory
-Test 118: ❌ ls >./outfiles/outfile01 >>./test_files/invalid_permission >>./outfiles/outfile02
-Only in ./mini_outfiles: outfile02
-mini outfiles:
-bash outfiles:
-Test 119: ❌ ls <missing >>./test_files/invalid_permission >>./outfiles/outfile02
-Only in ./mini_outfiles: outfile02
-mini outfiles:
-bash outfiles:
-cat: './bash_outfiles/*': No such file or directory
-Test 120: ❌ ls >>./test_files/invalid_permission >>./outfiles/outfile02 <missing
-Only in ./mini_outfiles: outfile02
-mini outfiles:
-bash outfiles:
-cat: './bash_outfiles/*': No such file or directory
-Test 127: ❌ echo hi >>./test_files/invalid_permission >./outfiles/outfile01 | echo bye
-Only in ./mini_outfiles: outfile01
-mini outfiles:
-bash outfiles:
-cat: './bash_outfiles/*': No such file or directory
-Test 130: ❌ cat <minishell.h>./outfiles/outfile
-Only in ./mini_outfiles: outfile
-mini outfiles:
-bash outfiles:
-cat: './bash_outfiles/*': No such file or directory
-Test 133: ❌ $PWD
+Test  75: ❌ cat <"./test_files/infile_big" | echo hi
 mini exit code = 1
-bash exit code = 126
-mini error = ( Permission denied)
-bash error = ( Is a directory)
-Test 135: ❌ $EMPTY echo hi
+bash exit code = 0
+Test  78: ❌ cat <missing | echo oi
+mini exit code = 1
+bash exit code = 0
+Test  79: ❌ cat <missing | cat <"./test_files/infile"
 mini output = ()
-bash output = (hi)
+bash output = (hi hello world 42)
+mini exit code = 1
+bash exit code = 0
+mini error = ( No such file or directory Success)
+bash error = ( No such file or directory)
+Test  80: ❌ echo <123 <456 hi | echo 42
+mini exit code = 1
+bash exit code = 0
+Test  91: ❌ echo hi >./outfiles/outfile01 | echo bye
+mini exit code = 1
+bash exit code = 0
+Test  92: ❌ echo hi >./outfiles/outfile01 >./outfiles/outfile02 | echo bye
+mini exit code = 1
+bash exit code = 0
+Test  93: ❌ echo hi | echo >./outfiles/outfile01 bye
+mini exit code = 1
+bash exit code = 0
+Test  94: ❌ echo hi | echo bye >./outfiles/outfile01 >./outfiles/outfile02
+mini exit code = 1
+bash exit code = 0
+Test  95: ❌ echo hi >./outfiles/outfile01 | echo bye >./outfiles/outfile02
+mini exit code = 1
+bash exit code = 0
+Test  96: ❌ echo hi >./outfiles/outfile01 >./test_files/invalid_permission | echo bye
+mini exit code = 1
+bash exit code = 0
+Test  97: ❌ echo hi >./test_files/invalid_permission | echo bye
+mini exit code = 1
+bash exit code = 0
+Test  98: ❌ echo hi >./test_files/invalid_permission >./outfiles/outfile01 | echo bye
+mini exit code = 1
+bash exit code = 0
+Test 121: ❌ echo hi >>./outfiles/outfile01 | echo bye
+mini exit code = 1
+bash exit code = 0
+Test 122: ❌ echo hi >>./outfiles/outfile01 >>./outfiles/outfile02 | echo bye
+mini exit code = 1
+bash exit code = 0
+Test 123: ❌ echo hi | echo >>./outfiles/outfile01 bye
+mini exit code = 1
+bash exit code = 0
+Test 124: ❌ echo hi | echo bye >>./outfiles/outfile01 >>./outfiles/outfile02
+mini exit code = 1
+bash exit code = 0
+Test 125: ❌ echo hi >>./outfiles/outfile01 | echo bye >>./outfiles/outfile02
+mini exit code = 1
+bash exit code = 0
+Test 126: ❌ echo hi >>./test_files/invalid_permission | echo bye
+mini exit code = 1
+bash exit code = 0
+Test 127: ❌ echo hi >>./test_files/invalid_permission >./outfiles/outfile01 | echo bye
+mini exit code = 1
+bash exit code = 0
 Test 136: ❌ ./test_files/invalid_permission
-mini exit code = 1
+mini exit code = 127
 bash exit code = 126
-Test 137: ❌ ./missing.out
-mini exit code = 1
-bash exit code = 127
-Test 141: ❌ ./test_files
-mini exit code = 1
-bash exit code = 126
-mini error = ( Permission denied)
-bash error = ( Is a directory)
-Test 142: ❌ /test_files
-mini exit code = 1
-bash exit code = 127
-
+mini error = ( No such file or directory)
+bash error = ( Permission denied)

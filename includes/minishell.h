@@ -18,8 +18,9 @@
 # include <malloc.h>
 # define TRUE 1
 # define FALSE 2
+#define READING_END 0
+#define WRITING_END 1
 #define SHELL_CHILD_PID_FILE "/tmp/minishell_child_pid"
-
 
 typedef enum e_operator
 {
@@ -56,7 +57,7 @@ typedef struct s_here_doc
 	struct s_here_doc	*next;
 }t_here_doc;
 
-typedef struct	s_env_list 
+typedef struct	s_env_list
 {
 	char				*str;
 	int					i;
@@ -70,7 +71,7 @@ typedef struct s_redirections
 	int				file_fd;
 	int				errnum;
 	t_quote			qt;
-	
+
 }			t_redirections;
 
 typedef struct s_tokenizer
@@ -100,8 +101,8 @@ typedef struct s_ast
 typedef struct s_env
 {
 	char	*name;
-	char	*value;	
-	struct s_env *next; 
+	char	*value;
+	struct s_env *next;
 
 }t_env;
 
@@ -113,6 +114,8 @@ typedef struct s_glb
 	t_redirections	*rdr;
 	t_list			*gc;
 	int 			exit_status;
+	int 			termination_status;
+	int             is_pipeline;
 	pid_t           pid_pipeline[2];
 
 }t_glb;
@@ -200,11 +203,8 @@ void	update_shell_lvl(t_env **env_list);
 char	**envp_to_env_vector(t_env *env_list);
 char	**envlist_to_array(t_env *env_list);
 int     has_pipe(t_tokenizer *tokens);
-void    execute_pipeline(t_tokenizer *tokens);
-t_tokenizer *split_tokens_at_pipe(t_tokenizer *tokens, t_tokenizer **right_side);
-int count_pipes(t_tokenizer *tokens);
-void     signal_pipeline(int sig);
-t_tokenizer **split_into_commands(t_tokenizer *tokens, int *cmd_count);
-void execute_multiple_pipes(t_tokenizer *tokens);
+
+void execute_pipeline(t_tokenizer *tokens, t_glb *glb, int *exit_status);
+void save_exit_status(t_glb *glb, int status_code);
 
 #endif

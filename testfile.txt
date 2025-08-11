@@ -1,3 +1,0 @@
-This is a test file for input redirection
-Line 2 of test file
-Line 3 of test file

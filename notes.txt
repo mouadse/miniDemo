@@ -1,2 +1,0 @@
-1. errno is forbidden to be used in MINISHELL
-

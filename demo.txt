@@ -1,20 +1,3 @@
-builtins
-demo.txt
-env_var
-exec
-includes
-infile.txt
-libft
-main.c
-main.o
-main_parsing.c
-Makefile
-minishell
-notes.txt
-output.txt
-parsing
-readline.supp
-README.md
-test
-testfile.txt
-testsing_functions
+This is a simple
+Demo file
+By Mouad

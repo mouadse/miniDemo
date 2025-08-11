@@ -12,15 +12,9 @@ char *get_cmd_path(char *cmd, t_env *env_list)
     if (!cmd)
         return NULL;
 
-    /* Handle absolute or relative paths */
+    /* Handle absolute or relative paths: return as-is, let execve report errno */
     if (ft_strchr(cmd, '/'))
     {
-        /* Check if it's a directory */
-        if (stat(cmd, &stat_buf) == 0 && S_ISDIR(stat_buf.st_mode))
-        {
-            errno = EISDIR; /* Set error to "Is a directory" */
-            return ft_strdup(cmd);
-        }
         return ft_strdup(cmd);
     }
 
@@ -37,15 +31,9 @@ char *get_cmd_path(char *cmd, t_env *env_list)
     while (paths[i])
     {
         full_path = str_concat_three(paths[i], "/", cmd);
-        if (full_path && access(full_path, X_OK) == 0)
+        if (full_path && stat(full_path, &stat_buf) == 0)
         {
-            /* Check if it's a directory */
-            if (stat(full_path, &stat_buf) == 0 && S_ISDIR(stat_buf.st_mode))
-            {
-                free(full_path);
-                i++;
-                continue;
-            }
+            /* If it's a directory, still return it; caller will handle and report 126 */
             free_strs(paths);
             return full_path;
         }
