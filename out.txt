@@ -1,0 +1,6 @@
+[1;32m➜[0m[1;36m Minishell $> [0mcat <missing | cat <"./test/test_files/infile"
+hi
+hello
+world
+42
+[1;32m➜[0m[1;36m Minishell $> [0m

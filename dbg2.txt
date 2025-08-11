@@ -1,0 +1,8 @@
+[dbg] redir < fd=3 for ./test/test_files/infile
+[dbg] builtin exit=0
+==60052==LeakSanitizer has encountered a fatal error.
+==60052==HINT: For debugging, try setting environment variable LSAN_OPTIONS=verbosity=1:log_threads=1
+==60052==HINT: LeakSanitizer does not work under ptrace (strace, gdb, etc)
+==60051==LeakSanitizer has encountered a fatal error.
+==60051==HINT: For debugging, try setting environment variable LSAN_OPTIONS=verbosity=1:log_threads=1
+==60051==HINT: LeakSanitizer does not work under ptrace (strace, gdb, etc)
