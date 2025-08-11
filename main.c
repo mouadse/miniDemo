@@ -162,10 +162,12 @@ int main(int ac, char **av, char **env)
 					}
 
 					execve(path, args, envp);
-					perror("execve");
+					ft_putstr_fd("minishell: ", 2);
+					ft_putstr_fd(path, 2);
+					ft_putstr_fd(": No such file or directory\n", 2);
 					free(path);
 					free_strs(envp);
-					exit(1);
+					exit(127);
 				}
 				else if (pid > 0)
                 {
