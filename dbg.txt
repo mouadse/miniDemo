@@ -1,7 +1,0 @@
-[dbg] redir < fd=3 for ./test/test_files/infile
-==59404==LeakSanitizer has encountered a fatal error.
-==59404==HINT: For debugging, try setting environment variable LSAN_OPTIONS=verbosity=1:log_threads=1
-==59404==HINT: LeakSanitizer does not work under ptrace (strace, gdb, etc)
-==59403==LeakSanitizer has encountered a fatal error.
-==59403==HINT: For debugging, try setting environment variable LSAN_OPTIONS=verbosity=1:log_threads=1
-==59403==HINT: LeakSanitizer does not work under ptrace (strace, gdb, etc)
