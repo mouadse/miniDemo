@@ -18,6 +18,8 @@ void	init_redirect_fds(t_tokenizer *tokens)
 	{
 		tokens->redirect.file_fd = -1;
 		tokens->redirect.errnum = 0;
+		/* default: treat delimiter as unquoted unless marked during expanding */
+		tokens->redirect.qt = NO_QUOTE;
 		tokens = tokens->next;
 	}
 }

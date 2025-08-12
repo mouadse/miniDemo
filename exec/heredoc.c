@@ -7,7 +7,6 @@ int open_heredoc_and_write_pipe(t_tokenizer *token, t_env *env, int *exit_status
     pid_t   pid;
     int     status;
 
-    (void)env;
     (void)exit_status;
 
     if (pipe(pipefd) == -1)
@@ -56,6 +55,12 @@ int open_heredoc_and_write_pipe(t_tokenizer *token, t_env *env, int *exit_status
             {
                 free(line);
                 break;
+            }
+            if (!heredoc_delimiter_is_quoted(token))
+            {
+                char *expanded = expand_heredoc_line(line, env);
+                free(line);
+                line = expanded;
             }
             if (write(pipefd[1], line, ft_strlen(line)) == -1
                 || write(pipefd[1], "\n", 1) == -1)
