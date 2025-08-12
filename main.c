@@ -65,8 +65,10 @@ int main(int ac, char **av, char **env)
 	setup_signals();
 	glb_list()->env = save_env(env);
 	glb_list()->exit_status = 0;
-	while (1)
-	{
+    while (1)
+    {
+        /* Restore interactive signal behavior before reading a new line */
+        setup_signals();
 		input = readline("\033[1;32m➜\033[0m\033[1;36m Minishell $> \033[0m");
         if (!input)
         {
@@ -97,7 +99,7 @@ int main(int ac, char **av, char **env)
 		}
 
 		expanding(&tokens);
-		set_signal_handler(tokens); //set+sognals
+		set_signal_handler(tokens); // only specializes for heredoc
 		init_redirect_fds(tokens);
 		redirection_infos(tokens);
 	//	print_tokenizer(tokens);
@@ -128,6 +130,13 @@ int main(int ac, char **av, char **env)
 				pid_t pid = fork();
 				if (pid == 0)
 				{
+                        /* In child: default signals so external cmds see SIGINT/SIGQUIT */
+                        struct sigaction act;
+                        sigemptyset(&act.sa_mask);
+                        act.sa_flags = 0;
+                        act.sa_handler = SIG_DFL;
+                        sigaction(SIGINT, &act, NULL);
+                        sigaction(SIGQUIT, &act, NULL);
 					if (execute_redirections(tokens))
 						exit(1);
 
@@ -182,7 +191,12 @@ int main(int ac, char **av, char **env)
 				}
 				else if (pid > 0)
 				{
+					/* Parent: ignore interactive signals while waiting */
+					signal(SIGINT, SIG_IGN);
+					signal(SIGQUIT, SIG_IGN);
 					waitpid(pid, &exit_status, 0);
+					/* Restore interactive handlers for next prompt */
+					setup_signals();
 					if (WIFEXITED(exit_status))
 						glb_list()->exit_status = WEXITSTATUS(exit_status);
 					else if (WIFSIGNALED(exit_status))

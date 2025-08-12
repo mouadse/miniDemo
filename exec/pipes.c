@@ -172,6 +172,10 @@ static void	child_exec_segment(int idx, int nseg, int (*pfds)[2],
 {
     char	**args;
 
+    /* In child: use default signals so SIGINT/SIGQUIT affect the process */
+    signal(SIGINT, SIG_DFL);
+    signal(SIGQUIT, SIG_DFL);
+
     if (seg_tail)
         seg_tail->next = NULL;
     setup_child_pipes(idx, nseg, pfds);
@@ -186,6 +190,10 @@ static void	child_exec_single(t_tokenizer *seg_head, t_glb *glb,
                 int *exit_status)
 {
     char	**args;
+
+    /* In child: use default signals so SIGINT/SIGQUIT affect the process */
+    signal(SIGINT, SIG_DFL);
+    signal(SIGQUIT, SIG_DFL);
 
     apply_redirections_or_exit(seg_head);
     args = tokens_to_args(seg_head);

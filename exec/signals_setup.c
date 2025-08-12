@@ -30,14 +30,11 @@ void	setup_signals(void)
 
 void	set_signal_handler(t_tokenizer *token)
 {
+	/* Only specialize for heredoc; otherwise keep whatever is configured */
 	if (token && token->op == LESS_LESS)
 	{
-		setup_signal_action(SIGINT, signal_handler_heredoc, SA_RESTART);
-		setup_signal_action(SIGQUIT, signal_handler_heredoc, SA_RESTART);
-	}
-	else
-	{
-		setup_signal_action(SIGINT, signal_handler_input, SA_RESTART);
-		setup_signal_action(SIGQUIT, signal_handler_input, SA_RESTART);
+		/* Parent is not in readline; use minimal handler */
+		setup_signal_action(SIGINT, signal_handler_heredoc, 0);
+		setup_signal_action(SIGQUIT, signal_handler_heredoc, 0);
 	}
 }

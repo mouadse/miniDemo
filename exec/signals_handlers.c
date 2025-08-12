@@ -17,6 +17,7 @@ void	signal_handler_general(int signum)
 	if (signum == SIGINT)
 	{
 		ft_putstr_fd("\n", STDOUT_FILENO);
+		/* Safe to use readline helpers only at the interactive prompt */
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();
@@ -26,42 +27,24 @@ void	signal_handler_general(int signum)
 
 void	signal_handler_input(int signum)
 {
+	/* Used while parent is not in readline: avoid rl_* calls */
 	if (signum == SIGINT)
 	{
 		ft_putstr_fd("\n", STDOUT_FILENO);
 		glb_list()->exit_status = 130;
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
 	}
 	else if (signum == SIGQUIT)
 	{
-		ft_putstr_fd("Quit (core dumped)\n", STDOUT_FILENO);
-		glb_list()->exit_status = 131;
+		/* Ignore visual noise while parent waits */
+		/* Do not print "Quit (core dumped)" in the shell itself */
 	}
 }
 
 static void	handle_heredoc_sigint(void)
 {
-	pid_t	child_pid;
-	int		fd;
-
-	write(STDOUT_FILENO, "\n", 1);
-	fd = open(SHELL_CHILD_PID_FILE, O_RDONLY);
-	if (fd < 0)
-	{
-		ft_putstr_fd("Error: Failed to open PID file\n", STDERR_FILENO);
-		_exit(1);
-	}
-	if (read(fd, &child_pid, sizeof(pid_t)) < 0)
-	{
-		ft_putstr_fd("Error: Failed to read PID\n", STDERR_FILENO);
-		close(fd);
-		_exit(1);
-	}
-	close(fd);
-	kill(child_pid, SIGKILL);
-	glb_list()->exit_status = 130;
+    /* Parent side during heredoc: print newline and mark status only */
+    write(STDOUT_FILENO, "\n", 1);
+    glb_list()->exit_status = 130;
 }
 
 static void	handle_heredoc_sigquit(void)

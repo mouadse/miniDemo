@@ -20,7 +20,6 @@
 # define FALSE 2
 #define READING_END 0
 #define WRITING_END 1
-#define SHELL_CHILD_PID_FILE "/tmp/minishell_child_pid"
 
 typedef enum e_operator
 {
