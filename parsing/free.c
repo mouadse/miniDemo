@@ -1,30 +1,46 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   free.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sel-jari <marvin@42.ma>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/13 01:34:13 by sel-jari          #+#    #+#             */
+/*   Updated: 2025/08/13 01:34:15 by sel-jari         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
+
+void	free_here_doc(t_here_doc *hd)
+{
+	t_here_doc	*temp;
+
+	while (hd)
+	{
+		temp = hd;
+		hd = hd->next;
+		free(temp->str);
+		free(temp);
+	}
+}
 
 void	free_tokens(char *input, t_tokenizer *tokens)
 {
 	t_tokenizer	*temp;
-	void		*tmp;
 
-	while (tokens != NULL)
+	while (tokens)
 	{
-		if (tokens->op == LESS_LESS && tokens->hd)
-		{
-			t_here_doc *hd = tokens->hd;
-			while (hd != NULL)
-			{
-				if (hd->str)
-					free(hd->str);
-				tmp = hd;
-				hd = hd->next;
-				free(tmp);
-			}
-			tokens->hd = NULL;
-		}
-		free(tokens->quotes_index);
-		free(tokens->str);
 		temp = tokens;
 		tokens = tokens->next;
+		free(temp->str);
+		temp->str = NULL;
+		free(temp->quotes_index);
+		temp->quotes_index = NULL;
+		free_here_doc(temp->hd);
+		temp->hd = NULL;
 		free(temp);
+		temp = NULL;
 	}
 	free(input);
 }

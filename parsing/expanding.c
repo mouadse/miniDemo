@@ -1,29 +1,45 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expanding.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sel-jari <marvin@42.ma>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/13 02:46:13 by sel-jari          #+#    #+#             */
+/*   Updated: 2025/08/13 02:46:14 by sel-jari         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static int	str_has_quote(const char *s)
 {
-    int i = 0;
-    while (s && s[i])
-    {
-        if (s[i] == '\'' || s[i] == '"')
-            return (1);
-        i++;
-    }
-    return (0);
+	int	i;
+
+	i = 0;
+	while (s && s[i])
+	{
+		if (s[i] == '\'' || s[i] == '"')
+			return (1);
+		i++;
+	}
+	return (0);
 }
 
 static int	prev_is_heredoc(t_tokenizer *head, t_tokenizer *node)
 {
-    t_tokenizer *it = head;
-    if (!head || !node)
-        return (0);
-    while (it && it->next)
-    {
-        if (it->next == node)
-            return (it->op == LESS_LESS);
-        it = it->next;
-    }
-    return (0);
+	t_tokenizer	*it;
+
+	it = head;
+	if (!head || !node)
+		return (0);
+	while (it && it->next)
+	{
+		if (it->next == node)
+			return (it->op == LESS_LESS);
+		it = it->next;
+	}
+	return (0);
 }
 
 void	remove_quote(char *str, int start, int end)
@@ -46,101 +62,46 @@ void	remove_quote(char *str, int start, int end)
 	str[ft_strlen(str) - 2] = 0;
 }
 
-int	quote_handling(t_tokenizer *token)
+static int	quote_handling_and_free(t_tokenizer **temp)
 {
-	int		i;
-	char	q;
-	int		start;
-	int		j;
+	t_tokenizer	*to_remove;
 
-	i = 0;
-	j = 0;
-	while (token->str[i] != 0)
+	if ((*temp)->op == NOT_OP)
+		quote_handling((*temp));
+	if ((*temp) != NULL && (*temp)->op == NOT_OP
+		&& (*temp)->str != NULL && (*temp)->str[0] == '\0')
 	{
-		q = is_quote(token->str[i]);
-		if (q != 0 && token->quotes_index != NULL && i == (token->quotes_index[j] - j))
-		{
-			start = i;
-			i++;
-			j++;
-			while (q != is_quote(token->str[i])
-				|| i != (token->quotes_index[j] - ((j -  1))))
-				i++;
-			remove_quote(token->str, start, i);
-			j++;
-			i -= 2;
-		}
-		i++;
+		to_remove = *temp;
+		*temp = (*temp)->next;
+		free(to_remove->str);
+		free(to_remove);
+		return (1);
 	}
 	return (0);
-}
-
-t_tokenizer	**env_var(t_tokenizer **token)
-{
-	int			i;
-	char		c;
-	int			to_dele;
-
-	i = 0;
-	to_dele = 0;
-	while ((*token)->str[i] != 0)
-	{
-		c = (*token)->str[i];
-		if (is_quote((*token)->str[i]))
-		{
-			i++;
-			while ((*token)->str[i] != c)
-				i++;
-		}
-		to_dele = expand_nq(token, &i);
-		i++;
-	}
-	if (to_retokenize(token) == 1)
-	{
-		tokenize_the_envar(token);
-	}
-	if (!to_dele)
-	{
-		save_index(*token);
-	}
-	return (token);
 }
 
 void	expanding(t_tokenizer **token)
 {
 	t_tokenizer	**temp;
-	t_tokenizer	*to_remove;
 
 	temp = token;
 	while ((*temp) != NULL)
 	{
-		// Do not read heredoc during expanding; it is handled at execution time
 		if ((*temp)->op == LESS_LESS)
 			(*temp)->hd = NULL;
 		if ((*temp)->op == NOT_OP)
 		{
-			/* Mark heredoc delimiter quoting (before we strip quotes) */
 			if (prev_is_heredoc(*token, *temp))
-				(*temp)->redirect.qt = str_has_quote((*temp)->str) ? THERES_QUOTE : NO_QUOTE;
-			// printf("hada :%s\n",(*temp)->str);
+			{
+				if (str_has_quote((*temp)->str))
+					(*temp)->redirect.qt = THERES_QUOTE;
+				else
+					(*temp)->redirect.qt = NO_QUOTE;
+			}
 			temp = env_var(temp);
-    		// print_tokenizer(*token);
-			// printf("\nhere\n");
 		}
-		if ((*temp)->op == NOT_OP)
-			quote_handling((*temp));
-
-		// Remove empty tokens after expansion
-		if ((*temp) != NULL && (*temp)->op == NOT_OP &&
-			(*temp)->str != NULL && (*temp)->str[0] == '\0')
-		{
-			to_remove = *temp;
-			*temp = (*temp)->next;
-			free(to_remove->str);
-			free(to_remove);
-			continue;
-		}
-
+		if (quote_handling_and_free(temp))
+			continue ;
 		if ((*temp) == NULL)
 			break ;
 		temp = &(*temp)->next;

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokenizer_utils.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sel-jari <marvin@42.ma>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/13 01:35:07 by sel-jari          #+#    #+#             */
+/*   Updated: 2025/08/13 01:35:08 by sel-jari         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int	is_operator(char *str)
@@ -46,6 +58,7 @@ void	fill_the_node_op(t_tokenizer *node, int op, int i)
 	node->str = NULL;
 	node->next = NULL;
 	node->quotes_index = NULL;
+	node->hd = NULL;
 }
 
 void	fill_the_node_str(t_tokenizer *node, int i, char *token)
@@ -55,6 +68,7 @@ void	fill_the_node_str(t_tokenizer *node, int i, char *token)
 	node->str = token;
 	node->next = NULL;
 	node->quotes_index = NULL;
+	node->hd = NULL;
 }
 
 char	is_quote(char c)

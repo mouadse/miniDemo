@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_redirections.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mouad <mouad@student.42.fr>               +#+  +:+       +#+        */
+/*   By: hsennane <hsennane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/12 00:13:00 by mouad             #+#    #+#             */
-/*   Updated: 2025/08/12 00:13:00 by mouad            ###   ########.fr       */
+/*   Created: 2025/08/12 05:16:08 by hsennane          #+#    #+#             */
+/*   Updated: 2025/08/12 05:38:53 by hsennane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,9 @@
 
 static int	open_redir_fd(t_tokenizer *op_tok)
 {
-	int			fd;
-	t_env		*env;
+	int	fd;
 
 	fd = -1;
-	env = glb_list()->env;
 	if (!op_tok || !op_tok->next)
 		return (-1);
 	if (op_tok->op == GREAT)
@@ -32,58 +30,24 @@ static int	open_redir_fd(t_tokenizer *op_tok)
 		if (op_tok->next->redirect.file_fd >= 0)
 			fd = op_tok->next->redirect.file_fd;
 		else
-			fd = open_heredoc_and_write_pipe(op_tok->next, env, NULL);
+			fd = open_heredoc_and_write_pipe(op_tok->next, glb_list()->env,
+					NULL);
 	}
 	return (fd);
 }
 
-static int	setup_out_redir(t_tokenizer *tok)
+static int	handle_fd(int fd, int std_fd, char *filename)
 {
-	int	fd;
-
-	fd = tok->next->redirect.file_fd;
-	if (fd < 0)
-		fd = open_redir_fd(tok);
 	if (fd < 0)
 	{
 		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd(tok->next->str, 2);
-		ft_putstr_fd(": ", 2);
-		ft_putstr_fd(strerror(errno), 2);
-		ft_putchar_fd('\n', 2);
+		ft_putstr_fd(filename, 2);
+		ft_putstr_fd(": No such file or directory\n", 2);
 		return (1);
 	}
-	if (dup2(fd, STDOUT_FILENO) < 0)
+	if (dup2(fd, std_fd) < 0)
 	{
-		perror("dup2");
-		if (fd > 2)
-			close(fd);
-		return (1);
-	}
-	if (fd > 2)
-		close(fd);
-	return (0);
-}
-
-static int	setup_in_redir(t_tokenizer *tok)
-{
-	int	fd;
-
-	fd = tok->next->redirect.file_fd;
-	if (fd < 0)
-		fd = open_redir_fd(tok);
-	if (fd < 0)
-	{
-		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd(tok->next->str, 2);
-		ft_putstr_fd(": ", 2);
-		ft_putstr_fd(strerror(errno), 2);
-		ft_putchar_fd('\n', 2);
-		return (1);
-	}
-	if (dup2(fd, STDIN_FILENO) < 0)
-	{
-		perror("dup2");
+		ft_putstr_fd("minishell: dup2 failed\n", 2);
 		if (fd > 2)
 			close(fd);
 		return (1);
@@ -95,18 +59,24 @@ static int	setup_in_redir(t_tokenizer *tok)
 
 int	execute_redirections(t_tokenizer *tokens)
 {
+	int	fd;
+
 	while (tokens)
 	{
-		if ((tokens->op == GREAT || tokens->op == GREAT_GREAT)
-			&& tokens->next)
+		if ((tokens->op == GREAT || tokens->op == GREAT_GREAT))
 		{
-			if (setup_out_redir(tokens))
+			fd = tokens->next->redirect.file_fd;
+			if (fd < 0)
+				fd = open_redir_fd(tokens);
+			if (handle_fd(fd, STDOUT_FILENO, tokens->next->str))
 				return (1);
 		}
-		else if ((tokens->op == LESS || tokens->op == LESS_LESS)
-			&& tokens->next)
+		else if ((tokens->op == LESS || tokens->op == LESS_LESS))
 		{
-			if (setup_in_redir(tokens))
+			fd = tokens->next->redirect.file_fd;
+			if (fd < 0)
+				fd = open_redir_fd(tokens);
+			if (handle_fd(fd, STDIN_FILENO, tokens->next->str))
 				return (1);
 		}
 		tokens = tokens->next;

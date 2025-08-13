@@ -1,32 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pwd.c                                              :+:      :+:    :+:   */
+/*   export_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hsennane <hsennane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/12 04:46:31 by hsennane          #+#    #+#             */
-/*   Updated: 2025/08/12 04:46:34 by hsennane         ###   ########.fr       */
+/*   Created: 2025/08/12 05:25:12 by hsennane          #+#    #+#             */
+/*   Updated: 2025/08/12 05:25:15 by hsennane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	pwd(int *exit_status)
+void	print_exported_vars(t_env *env)
 {
-	char	*path;
-
-	path = getcwd(NULL, 0);
-	if (path == NULL)
+	while (env)
 	{
-		perror("pwd");
-		*exit_status = 1;
-		return ;
-	}
-	else
-	{
-		ft_putendl_fd(path, STDOUT_FILENO);
-		free(path);
-		*exit_status = 0;
+		if (env->value)
+		{
+			ft_putstr_fd("declare -x ", 1);
+			ft_putstr_fd(env->name, 1);
+			ft_putstr_fd("=\"", 1);
+			ft_putstr_fd(env->value, 1);
+			ft_putstr_fd("\"\n", 1);
+		}
+		else
+		{
+			ft_putstr_fd("declare -x ", 1);
+			ft_putstr_fd(env->name, 1);
+			ft_putstr_fd("\n", 1);
+		}
+		env = env->next;
 	}
 }

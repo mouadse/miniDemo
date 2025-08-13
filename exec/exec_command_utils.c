@@ -1,29 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipes_utils.c                                      :+:      :+:    :+:   */
+/*   exec_command_utils.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mouad <mouad@student.42.fr>               +#+  +:+       +#+        */
+/*   By: hsennane <hsennane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/12 00:25:00 by mouad             #+#    #+#             */
-/*   Updated: 2025/08/12 00:25:00 by mouad            ###   ########.fr       */
+/*   Created: 2025/08/12 05:23:58 by hsennane          #+#    #+#             */
+/*   Updated: 2025/08/12 05:24:00 by hsennane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	save_exit_status(t_glb *glb, int status_code)
+void	free_strs(char **strs)
 {
-	glb->exit_status = status_code;
-}
+	int	i;
 
-int	has_pipe(t_tokenizer *tokens)
-{
-	while (tokens)
+	i = 0;
+	if (!strs)
+		return ;
+	while (strs[i])
 	{
-		if (tokens->op == PIPE)
-			return (1);
-		tokens = tokens->next;
+		free(strs[i]);
+		i++;
 	}
-	return (0);
+	free(strs);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_command.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mouad <mouad@student.42.fr>               +#+  +:+       +#+        */
+/*   By: hsennane <hsennane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/12 00:08:00 by mouad             #+#    #+#             */
-/*   Updated: 2025/08/12 00:08:00 by mouad            ###   ########.fr       */
+/*   Created: 2025/08/12 05:16:01 by hsennane          #+#    #+#             */
+/*   Updated: 2025/08/12 05:16:02 by hsennane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,9 @@ static char	*find_in_paths(char **paths, char *cmd)
 
 static char	*search_path_in_env(char *cmd, t_env *env_list)
 {
-	char		**paths;
-	char		*path_env;
-	char		*found;
+	char	**paths;
+	char	*path_env;
+	char	*found;
 
 	path_env = get_env_value("PATH", env_list);
 	if (!path_env)
@@ -68,42 +68,34 @@ char	*get_cmd_path(char *cmd, t_env *env_list)
 	return (search_path_in_env(cmd, env_list));
 }
 
-void	free_strs(char **strs)
+static int	child_process_exec(char **args, t_env **env)
 {
-	int	i;
+	char	**envp;
 
-	i = 0;
-	if (!strs)
-		return ;
-	while (strs[i])
+	envp = envlist_to_array(*env);
+	if (!envp)
 	{
-		free(strs[i]);
-		i++;
+		ft_putstr_fd("minishell: failed to get environment\n", STDERR_FILENO);
+		exit(EXIT_FAILURE);
 	}
-	free(strs);
+	execve(args[0], args, envp);
+	ft_putstr_fd("minishell: execve failed\n", STDERR_FILENO);
+	exit(EXIT_FAILURE);
 }
 
 int	execute_command(char **args, t_env **env)
 {
 	pid_t	pid;
 	int		status;
-	char	**envp;
 
 	pid = fork();
 	if (pid < 0)
 	{
-		perror("fork failed");
+		ft_putstr_fd("minishell: fork failed\n", STDERR_FILENO);
 		return (-1);
 	}
 	if (pid == 0)
-	{
-		envp = envlist_to_array(*env);
-		if (!envp)
-			exit(EXIT_FAILURE);
-		execve(args[0], args, envp);
-		perror("execve failed");
-		exit(EXIT_FAILURE);
-	}
+		child_process_exec(args, env);
 	waitpid(pid, &status, 0);
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));

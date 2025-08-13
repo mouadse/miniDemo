@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   args_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mouad <mouad@student.42.fr>               +#+  +:+       +#+        */
+/*   By: hsennane <hsennane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/11 23:59:00 by mouad             #+#    #+#             */
-/*   Updated: 2025/08/11 23:59:00 by mouad            ###   ########.fr       */
+/*   Created: 2025/08/12 05:15:42 by hsennane          #+#    #+#             */
+/*   Updated: 2025/08/12 05:15:43 by hsennane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ static int	count_args(t_tokenizer *t)
 	tmp = t;
 	while (tmp)
 	{
-		if (tmp->op == LESS || tmp->op == LESS_LESS
-			|| tmp->op == GREAT || tmp->op == GREAT_GREAT)
+		if (tmp->op == LESS || tmp->op == LESS_LESS || tmp->op == GREAT
+			|| tmp->op == GREAT_GREAT)
 		{
 			tmp = tmp->next;
 			if (tmp)
@@ -48,8 +48,8 @@ static void	fill_args(t_tokenizer *t, char **args)
 	tmp = t;
 	while (tmp)
 	{
-		if (tmp->op == LESS || tmp->op == LESS_LESS
-			|| tmp->op == GREAT || tmp->op == GREAT_GREAT)
+		if (tmp->op == LESS || tmp->op == LESS_LESS || tmp->op == GREAT
+			|| tmp->op == GREAT_GREAT)
 		{
 			tmp = tmp->next;
 			if (tmp)
@@ -69,8 +69,8 @@ static void	fill_args(t_tokenizer *t, char **args)
 
 char	**tokens_to_args(t_tokenizer *tokens)
 {
-	int				count;
-	char			**args;
+	int		count;
+	char	**args;
 
 	count = count_args(tokens);
 	args = gc_alloc(sizeof(char *) * (count + 1));

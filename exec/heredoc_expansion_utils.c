@@ -1,31 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlcpy.c                                       :+:      :+:    :+:   */
+/*   heredoc_expansion_utils.c                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-jari <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: hsennane <hsennane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/01 22:44:05 by sel-jari          #+#    #+#             */
-/*   Updated: 2024/11/01 22:44:07 by sel-jari         ###   ########.fr       */
+/*   Created: 2025/08/12 06:29:30 by hsennane          #+#    #+#             */
+/*   Updated: 2025/08/12 06:29:32 by hsennane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-#include <stdio.h>
+#include "minishell.h"
 
-size_t	ft_strlcpy(char *dst, const char *src, size_t size)
+int	is_name_char(int c)
 {
-	size_t	i;
+	return (ft_isalnum(c) || c == '_');
+}
 
-	i = 0;
-	if (size)
-	{
-		while ((i < size - 1) && src[i])
-		{
-			dst[i] = src[i];
-			i++;
-		}
-		dst[i] = 0;
-	}
-	return (ft_strlen(src));
+int	heredoc_delimiter_is_quoted(t_tokenizer *delim_tok)
+{
+	if (!delim_tok)
+		return (0);
+	if (delim_tok->redirect.qt == THERES_QUOTE)
+		return (1);
+	return (0);
 }
